@@ -20,3 +20,6 @@
       with_dict: loopbacks
       register: trace_result
 
+#    - name: Debug registered variables
+#      debug: var=trace_result
+
