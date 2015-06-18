@@ -1,0 +1,17 @@
+---
+- name: Run traceroute commands
+  hosts: cisco-devices
+  gather_facts: false
+  remote_user: cisco
+  
+  tasks:
+    - name: debug hostvars
+      debug: var=groups['cisco-devices']
+
+    - name: run traceroute to every other host
+      raw: traceroute hostvars[{{ item }}][ansible_ssh_host] source Loopback0 probe 1 numeric
+      when: item != inventory_hostname
+      with_items: groups['cisco-devices']
+      register: trace_result
+
+    - debug: var=trace_result
