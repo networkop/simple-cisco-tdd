@@ -32,8 +32,8 @@ FILENAME="group_vars/all.yml"
 class FactUpdater(object):
 
     def __init__(self, module):
-        # ipDictHost is a dictionary with IPs as keys and interface names as values
-        self.ipDictHost = module.params['ipTable']
+        # ip2intf is a dictionary with IPs as keys and interface names as values
+        self.ip2intf = module.params['ipTable']
         self.hostname = module.params['hostname']
         self.file_content = {'ip2host':{}} 
 
@@ -51,9 +51,10 @@ class FactUpdater(object):
 
 
     def update(self):
-        for ip in self.ipDictHost:
-            if 'ip2host' in self.file_content:
-                self.file_content['ip2host'][ip] = [self.hostname, self.ipDictHost[ip]]
+        if not 'ip2host' in self.file_content:
+            self.file_content['ip2host'] = dict()
+        for ip in self.ip2intf:
+            self.file_content['ip2host'][ip] = [self.hostname, self.ip2intf[ip]]
 
 
 
