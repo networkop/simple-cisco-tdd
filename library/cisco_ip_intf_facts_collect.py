@@ -31,24 +31,25 @@ class SIIBparse(object):
 
     def __init__(self, module):
         self.output_text = module.params['output_text']
+        #  data structure to store IP to interface name mapping
+        self.ip2intf = dict()
 
     def parse(self):
-        ipDict = dict()
         # go through each line of text looking for interface in 'up' state
         for line in self.output_text.split("\n"):
             row = line.split()
             if len(row) > 0 and row[-1] == 'up':
-                # ip address is in 2nd row
+                # ip address is in 2nd column 
                 ipAddress = row[1]
-                # interface name is in 1st row
+                # interface name is in 1st column
                 intfName = row[0]
                 # store ip and interface pair in a hash 
-                ipDict[ipAddress] = intfName
+                self.ip2intf[ipAddress] = intfName
         # Parsed output wil be accessible in ansible through 'IPs' host variable 
         result = {
-            "IPs": ipDict
+            "IPs": self.ip2intf
         }
-        rc = 0 if len(ipDict) > 0 else 1
+        rc = 0 if len(self.ip2intf) > 0 else 1
         return rc, result
 
 def main():
