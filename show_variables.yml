@@ -1,0 +1,11 @@
+---
+- name: Run traceroute commands
+  hosts: cisco-devices
+  gather_facts: false
+  remote_user: cisco
+
+  tasks:
+
+    - name: Debug registered variables
+      debug: var=hostvars
+      run_once: true

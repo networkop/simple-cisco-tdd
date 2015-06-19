@@ -1,0 +1,31 @@
+---
+ip2host:
+   10.0.0.1: [R1, Loopback0]
+   10.0.0.2: [R2, Loopback0]
+   10.0.0.3: [R3, Loopback0]
+   10.0.0.4: [R4, Loopback0]
+   12.12.12.1: [R1, Ethernet0/0]
+   12.12.12.2: [R2, Ethernet0/0]
+   14.14.14.1: [R1, Ethernet0/1]
+   14.14.14.4: [R4, Ethernet0/1]
+   192.168.247.25: [R1, Ethernet0/2]
+   23.23.23.2: [R3, Ethernet0/0]
+   34.34.34.3: [R3, Ethernet0/1]
+   34.34.34.4: [R4, Ethernet0/0]
+scenarios:
+   '1':
+   - testing of primary link
+   -  -  - r1
+         - r3
+         - [r2]
+      -  - r1
+         - r4
+         - [r2, r3]
+   '2':
+   - testing of backup link
+   -  -  - r1
+         - r3
+         - [r4]
+      -  - r1
+         - r2
+         - [r4, r3]

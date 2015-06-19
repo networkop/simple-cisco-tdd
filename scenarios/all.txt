@@ -1,0 +1,9 @@
+1. Testing of Primary Link
+
+1.1 From R1 to R3 via R2  
+1.2 From R1 to R4 via R2, R3
+2. Testing of Backup Link
+
+2.1 From R1 to R3 via R4 
+2.2 From R1 to R2 via R4,R3
+

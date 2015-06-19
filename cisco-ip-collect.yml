@@ -1,0 +1,38 @@
+---
+- name: Collect IP address data
+  hosts: cisco-devices
+  gather_facts: false
+  remote_user: cisco
+  serial: 1
+
+  tasks:
+
+    - name: capture show ip interface brief
+      raw: show ip interface brief | exclude unassigned
+      register: siib_text
+
+    - name: parse the output of "show ip interface brief"
+      cisco_ip_intf_facts_collect: output_text="{{ siib_text.stdout }}"
+      delegate_to: 127.0.0.1
+
+    - name: combine ip address facts and save as a global variable
+      cisco_ip_intf_facts_combine: 
+        ipTable="{{ IPs }}"
+        hostname="{{ inventory_hostname }}"
+      delegate_to: 127.0.0.1
+ #   - name: Debug registered variables
+ #     debug: var=hostvars
+  tags: 
+    - collect
+
+- name: Parse and save scenarios
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    
+    - name: parse scenario file and save it in group_vars/all.yml
+      local_action: cisco_scenarios_convert
+  
+  tags:
+    - scenario
