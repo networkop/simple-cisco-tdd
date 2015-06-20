@@ -1,0 +1,62 @@
+---
+- name: Run traceroute commands
+  hosts: cisco-devices
+  gather_facts: false
+  remote_user: cisco
+
+  vars_prompt:
+    - name: scenario_num
+      prompt: "Enter scenario number"
+      default: "1"
+      private: no
+
+  tasks:
+
+    - name: extracting scenario name and steps 
+      set_fact:
+        scenario_steps: "{{ scenarios[scenario_num][1] }}"
+        scenario_name: "{{ scenarios[scenario_num][0] }}"
+
+#    - name: debug hostvars
+#      when: inventory_hostname == "R1"
+#      debug: var=scenario_steps[inventory_hostname]
+#
+#    - name: debug hostvars
+#      when: inventory_hostname == "R1"
+#      debug: var=scenario_name
+
+    - name: run traceroutes as per the defined scenario steps
+      raw: traceroute {{ hostvars[item.key]['ansible_ssh_host'] }} source Loopback0 probe 1 numeric
+      when: scenario_steps[inventory_hostname] is defined
+      with_dict: scenario_steps[inventory_hostname]|default({})
+      register: trace_result
+
+    - name: parse traceroute ouput
+      cisco_trace_parse: 
+        dest_host: "{{ item.item.key }}"
+        std_out: "{{ item.stdout }}"
+      connection: local
+      when: item.stdout is defined
+      with_items: trace_result.results
+
+#    - name: debug hostvars
+#      debug: var=hostvars[inventory_hostname]
+
+    - name: verify traceroutes against pre-defined scenarios 
+      cisco_tdd_verify: 
+        dest_host: "{{ item.key }}"
+        src_host: "{{ inventory_hostname }}"
+        scenario: "{{ scenario_steps }}"
+        ip2host: "{{ ip2host }}"
+        path: "{{ hostvars[inventory_hostname][item.key] }}"
+        scenario_name: "{{ scenario_name }}"
+      when: scenario_steps[inventory_hostname] is defined
+      with_dict: scenario_steps[inventory_hostname]|default({})
+      connection: local
+
+#    - name: debug hostvars
+#      debug: var=hostvars[inventory_hostname]
+  tags:
+    - run
+
+

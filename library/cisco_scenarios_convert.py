@@ -53,28 +53,31 @@ class ScenarioParser(object):
         # compile regex pattern matching scenario name
         name_pattern = re.compile(r'^(\d+)\.?\s+(.*)')
         # compile regex pattern matching scenario step
-        step_pattern = re.compile(r'.*from\s+([\d\w]+)\s+to\s+([\d\w]+)\s+via\s+([\d\w]+,*\s*[\d\w]+)*')
+        step_pattern = re.compile(r'.*[Ff][Rr][Oo][Mm]\s+([\d\w]+)\s+[Tt][Oo]\s+([\d\w]+)\s+[Vv][Ii][Aa]\s+([\d\w]+,*\s*[\d\w]+)*')
         with open(SCENARIO_FILE, 'r') as fileObj:
             for line in fileObj:
                 # ignore commented and empty lines
                 if not line.startswith('#') and len(line) > 3:
-                    # lowercase all for simplicity
-                    line = line.lower()
                     name_match = name_pattern.match(line)
                     step_match = step_pattern.match(line)
                     if name_match:
                         scenario_number = name_match.group(1) 
                         scenario_name   = name_match.group(2)
-                        scenario_steps  = [scenario_name, []] 
-                        self.storage[scenario_number] = scenario_steps
+                        scenario_steps  = [scenario_name, {}] 
+                        if not scenario_number in self.storage:
+                            self.storage[scenario_number] = scenario_steps
+                        else:
+                            scenario_steps = self.storage[scenario_number]
                     elif step_match:
                         from_device = step_match.group(1)
                         to_device = step_match.group(2)
                         via = step_match.group(3)
                         via_devices = [device_name.strip() for device_name in via.split(',')]
                         # if scenario number and name are set
-                        if not scenario_number == 0 or scenario_name:
-                            scenario_steps[1].append([from_device, to_device, via_devices]) 
+                        if not scenario_number == 0 or not scenario_name:
+                            if not from_device in scenario_steps[1]:
+                                scenario_steps[1][from_device] = dict()   
+                            scenario_steps[1][from_device][to_device] = via_devices
                     else:
                         #something went wrong
                         self.rc = 1 
