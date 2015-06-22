@@ -1,0 +1,3 @@
+---
+ansible_ssh_host: 10.0.0.4
+ansible_ssh_pass: cisco
