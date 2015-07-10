@@ -23,7 +23,9 @@ module: cisco_trace_parse
 short_description: parses the results of traceroute command of cisco cli
 '''
 EXAMPLES = '''
-- cisco_ip_intf_facts: text={{ text_inventory.stdout }} command=siib
+      cisco_trace_parse:
+        dest_host: "{{ item.item.key }}"
+        std_out: "{{ item.stdout }}"
 '''
 
 class TraceParse(object):

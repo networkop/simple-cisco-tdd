@@ -19,17 +19,11 @@
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 DOCUMENTATION = '''
 ---
-module: 
-short_description: 
+module: cisco_tdd_verify
+short_description: verifies traceroutes against pre-defined scenarios 
 '''
 EXAMPLES = '''
-      cisco_tdd_verify:
-        dest_host: "{{ item.key }}"
-        src_host: "{{ inventory_hostname }}"
-        scenario: "{{ scenario_steps }}"
-        ip2host: "{{ ip2host }}"
-        path: "{{ hostvars[inventory_hostname][item.key] }}"
-        scenario_name: "{{ scenario_name }}"
+
 '''
 
 
@@ -51,12 +45,6 @@ class ResultCompare(object):
                 trace_path_new.append(self.ip2host[dev][0])
             else:
                 trace_path_new.append(dev)
-        print "name " + self.scenario_name
-        print "from !!! " + str(self.src_host)
-        print "dest !!! " + str(self.dest_host)
-        print "ref_scenario !!! " + str(self.ref_scenario[self.src_host][self.dest_host])
-        print "trace !!! " + str(self.trace_path)
-        print "trace_new !!! " + str(trace_path_new)
         if self.src_host in self.ref_scenario:
             if self.dest_host in self.ref_scenario[self.src_host]:
                 ref_path = self.ref_scenario[self.src_host][self.dest_host]

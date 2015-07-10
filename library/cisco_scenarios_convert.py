@@ -19,11 +19,11 @@
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 DOCUMENTATION = '''
 ---
-module: cisco_scenarios
+module: cisco_scenarios_convert
 short_description: parses the scenario file and stores it in global variable
 '''
 EXAMPLES = '''
-- local_action: cisco_scenarios_combine
+- local_action: cisco_scenarios_convert
 '''
 
 import yaml

@@ -19,11 +19,11 @@
 # along with this software.  If not, see <http://www.gnu.org/licenses/>.
 DOCUMENTATION = '''
 ---
-module: cisco_ip_intf_facts_combine
-short_description: parses and injects the results of show ip interface brief command of cisco cli
+module: cisco_ip_intf_facts_combine 
+short_description: injects IP address information into group_vars/all.yml file
 '''
 EXAMPLES = '''
-- cisco_ip_intf_facts: text={{ text_inventory.stdout }} command=siib
+- cisco_ip_intf_facts_combine: ipTable = {{ IPs }} hostname = {{inventory_hostname }}
 '''
 import yaml
 
