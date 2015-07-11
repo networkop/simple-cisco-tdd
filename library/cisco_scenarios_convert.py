@@ -38,6 +38,7 @@ class ScenarioParser(object):
         self.rc = 0
         self.storage = dict()
         self.file_content = dict()
+        self.msg = str()
 
     def open(self):
        try:
@@ -53,7 +54,7 @@ class ScenarioParser(object):
         # compile regex pattern matching scenario name
         name_pattern = re.compile(r'^(\d+)\.?\s+(.*)')
         # compile regex pattern matching scenario step
-        step_pattern = re.compile(r'.*[Ff][Rr][Oo][Mm]\s+([\d\w]+)\s+[Tt][Oo]\s+([\d\w]+)\s+[Vv][Ii][Aa]\s+([\d\w]+,*\s*[\d\w]+)*')
+        step_pattern = re.compile(r'.*[Ff][Rr][Oo][Mm]\s+([\d\w\-]+)\s+[Tt][Oo]\s+([\d\w\-]+)\s+[Vv][Ii][Aa]\s+([\d\w\-]+,*\s*[\d\w\-]+)*')
         with open(SCENARIO_FILE, 'r') as fileObj:
             for line in fileObj:
                 # ignore commented and empty lines
@@ -81,8 +82,7 @@ class ScenarioParser(object):
                     else:
                         #something went wrong
                         self.rc = 1 
-                    
-                    
+                        self.msg = line
         
     def write(self):
        self.file_content['scenarios'] = self.storage
@@ -98,7 +98,7 @@ def main():
     parser.read()
     parser.write()
     if not parser.rc == 0:
-        module.fail_json(msg="Failed to parse. Incorrect input.")
+        module.fail_json(msg="Failed to parse: %s" % parser.msg)
     else:
         module.exit_json(changed=False)
 
